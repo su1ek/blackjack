@@ -44,6 +44,17 @@ Game
 ├── Handles player decisions
 └── Determines the winner
 ```
+## How to Run
+
+Clone the repository:
+
+```bash
+git clone https://github.com/su1ek/blackjack.git
+```
+Run the application
+```bash
+python main.py
+```
 ## Example Gameplay
 
 ```text
