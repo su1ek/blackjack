@@ -52,14 +52,15 @@ class Hand:
 
     def calculate_value(self):
         self.value = 0
-        has_ace = False
+        aces = 0
         for card in self.cards:
             card_value = int(card.rank['value'])
             self.value += card_value
             if card.rank['rank'] == 'A':
-                has_ace = True
-        if has_ace and self.value > 21:
+                aces += 1
+        if aces and self.value > 21:
             self.value -= 10
+            aces -= 1
 
     def get_value(self):
         self.calculate_value()
@@ -111,10 +112,10 @@ class Game:
 
             choice = ""
             while player_hand.get_value() < 21 and choice not in ["s", "stand"]:
-                choice = input('Please choose "Hit" or "Stand"').lower()
+                choice = input('Please choose "Hit" or "Stand" ').lower()
                 print()
                 while choice not in ['h', 'hit', 's', 'stand']:
-                    choice = input('Please enter "Hit" or "Stand" (or H/S).').lower()
+                    choice = input('Please enter "Hit" or "Stand" (or H/S). ').lower()
                     print()
                 if choice in ['h', 'hit']:
                     player_hand.add_card(deck.deal(1))
