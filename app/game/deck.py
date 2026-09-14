@@ -1,3 +1,6 @@
+import random
+from game.card import Card
+
 class Deck:
     def __init__(self):
         suits = ['♠', '♣', '♥', '♦']

@@ -1,3 +1,5 @@
+from game.card import Card
+
 class Hand:
     def __init__(self, dealer = False):
         self.cards = []
