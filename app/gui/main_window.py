@@ -1,3 +1,4 @@
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QMainWindow,
     QWidget,
@@ -8,6 +9,7 @@ from PySide6.QtWidgets import (
 )
 
 from game.game import Game
+from gui.card_widget import CardWidget
 
 
 class MainWindow(QMainWindow):
@@ -31,8 +33,14 @@ class MainWindow(QMainWindow):
         self.dealer_label = QLabel("Dealer's hand")
         main_layout.addWidget(self.dealer_label)
 
+        self.dealer_cards_layout = QHBoxLayout()
+        main_layout.addLayout(self.dealer_cards_layout)
+
         self.player_label = QLabel("Your hand")
         main_layout.addWidget(self.player_label)
+
+        self.player_cards_layout = QHBoxLayout()
+        main_layout.addLayout(self.player_cards_layout)
 
         buttons_layout = QHBoxLayout()
 
@@ -82,7 +90,7 @@ class MainWindow(QMainWindow):
     def stand(self):
         self.game.stand()
 
-        self.update_display()
+        self.update_display(show_dealer_cards=True)
 
         result = self.game.check_winner()
 
@@ -96,16 +104,49 @@ class MainWindow(QMainWindow):
         self.hit_button.setEnabled(False)
         self.stand_button.setEnabled(False)
 
-    def update_display(self):
+    def update_display(self, show_dealer_cards=False):
+        self.clear_card_layout(self.player_cards_layout)
+        self.clear_card_layout(self.dealer_cards_layout)
+
         player_value = self.game.player_hand.get_value()
-        dealer_value = self.game.dealer_hand.get_value()
 
-        self.player_label.setText(
-            f"Your hand: {player_value} | "
-            f"{', '.join(str(card) for card in self.game.player_hand.cards)}"
-        )
+        self.player_label.setText(f"Your hand: {player_value}")
 
-        self.dealer_label.setText(
-            f"Dealer's hand: {dealer_value} | "
-            f"{', '.join(str(card) for card in self.game.dealer_hand.cards)}"
-        )
+        for card in self.game.player_hand.cards:
+            self.player_cards_layout.addWidget(CardWidget(card))
+
+        if show_dealer_cards:
+            dealer_value = self.game.dealer_hand.get_value()
+            self.dealer_label.setText(f"Dealer's hand: {dealer_value}")
+
+            for card in self.game.dealer_hand.cards:
+                self.dealer_cards_layout.addWidget(CardWidget(card))
+        else:
+            dealer_visible_card = self.game.dealer_hand.cards[1]
+
+            self.dealer_label.setText("Dealer's hand")
+
+            hidden_card = QLabel("Hidden")
+            hidden_card.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            hidden_card.setFixedSize(100, 140)
+            hidden_card.setStyleSheet("""
+                QLabel {
+                    background-color: #444;
+                    color: white;
+                    border: 2px solid black;
+                    border-radius: 8px;
+                    font-size: 18px;
+                    font-weight: bold;
+                }
+            """)
+
+            self.dealer_cards_layout.addWidget(hidden_card)
+            self.dealer_cards_layout.addWidget(CardWidget(dealer_visible_card))
+
+    def clear_card_layout(self, layout):
+        while layout.count():
+            item = layout.takeAt(0)
+            widget = item.widget()
+
+            if widget is not None:
+                widget.deleteLater()
