@@ -19,30 +19,41 @@ class MainWindow(QMainWindow):
         self.game = Game()
 
         self.setWindowTitle("Blackjack")
-        self.resize(800, 600)
+        self.resize(900, 650)
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
 
         main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(30, 25, 30, 25)
+        main_layout.setSpacing(15)
         central_widget.setLayout(main_layout)
 
         self.status_label = QLabel("Welcome to Blackjack!")
+        self.status_label.setObjectName("statusLabel")
+        self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         main_layout.addWidget(self.status_label)
 
         self.dealer_label = QLabel("Dealer's hand")
+        self.dealer_label.setObjectName("handLabel")
         main_layout.addWidget(self.dealer_label)
 
         self.dealer_cards_layout = QHBoxLayout()
+        self.dealer_cards_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.dealer_cards_layout.setSpacing(15)
         main_layout.addLayout(self.dealer_cards_layout)
 
         self.player_label = QLabel("Your hand")
+        self.player_label.setObjectName("handLabel")
         main_layout.addWidget(self.player_label)
 
         self.player_cards_layout = QHBoxLayout()
+        self.player_cards_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.player_cards_layout.setSpacing(15)
         main_layout.addLayout(self.player_cards_layout)
 
         buttons_layout = QHBoxLayout()
+        buttons_layout.setSpacing(15)
 
         self.new_game_button = QPushButton("New Game")
         self.hit_button = QPushButton("Hit")
@@ -52,6 +63,7 @@ class MainWindow(QMainWindow):
         buttons_layout.addWidget(self.hit_button)
         buttons_layout.addWidget(self.stand_button)
 
+        main_layout.addStretch()
         main_layout.addLayout(buttons_layout)
 
         self.new_game_button.clicked.connect(self.new_game)
@@ -60,6 +72,54 @@ class MainWindow(QMainWindow):
 
         self.hit_button.setEnabled(False)
         self.stand_button.setEnabled(False)
+
+        self.setStyleSheet("""
+            QMainWindow {
+                background-color: #0f5132;
+            }
+
+            QWidget {
+                background-color: #0f5132;
+                color: white;
+                font-family: Arial;
+            }
+
+            QLabel#statusLabel {
+                font-size: 26px;
+                font-weight: bold;
+                padding: 10px;
+            }
+
+            QLabel#handLabel {
+                font-size: 20px;
+                font-weight: bold;
+                padding: 5px;
+            }
+
+            QPushButton {
+                background-color: #198754;
+                color: white;
+                border: 2px solid #146c43;
+                border-radius: 8px;
+                padding: 12px;
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            QPushButton:hover {
+                background-color: #20a060;
+            }
+
+            QPushButton:pressed {
+                background-color: #146c43;
+            }
+
+            QPushButton:disabled {
+                background-color: #495057;
+                color: #adb5bd;
+                border-color: #343a40;
+            }
+        """)
 
     def new_game(self):
         self.game.new_game()
@@ -131,7 +191,7 @@ class MainWindow(QMainWindow):
             hidden_card.setFixedSize(100, 140)
             hidden_card.setStyleSheet("""
                 QLabel {
-                    background-color: #444;
+                    background-color: #343a40;
                     color: white;
                     border: 2px solid black;
                     border-radius: 8px;
