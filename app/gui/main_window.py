@@ -126,10 +126,27 @@ class MainWindow(QMainWindow):
 
         self.update_display()
 
-        self.status_label.setText("Your turn.")
+        initial_result = self.game.check_initial_result()
 
-        self.hit_button.setEnabled(True)
-        self.stand_button.setEnabled(True)
+        if initial_result == "player_blackjack":
+            self.status_label.setText("Blackjack! You win!")
+            self.hit_button.setEnabled(False)
+            self.stand_button.setEnabled(False)
+
+        elif initial_result == "dealer_blackjack":
+            self.status_label.setText("Dealer has blackjack!")
+            self.hit_button.setEnabled(False)
+            self.stand_button.setEnabled(False)
+
+        elif initial_result == "tie":
+            self.status_label.setText("Both have blackjack. It's a tie!")
+            self.hit_button.setEnabled(False)
+            self.stand_button.setEnabled(False)
+
+        else:
+            self.status_label.setText("Your turn.")
+            self.hit_button.setEnabled(True)
+            self.stand_button.setEnabled(True)
 
     def hit(self):
         self.game.hit()
@@ -144,8 +161,20 @@ class MainWindow(QMainWindow):
             self.stand_button.setEnabled(False)
 
         elif state == "21":
-            self.status_label.setText("You have 21!")
+            self.game.stand()
+            self.update_display(show_dealer_cards=True)
+
+            result = self.game.check_winner()
+
+            if result == "player_win":
+                self.status_label.setText("You have 21! You win!")
+            elif result == "dealer_win":
+                self.status_label.setText("You have 21, but dealer wins!")
+            else:
+                self.status_label.setText("You have 21! It's a tie.")
+
             self.hit_button.setEnabled(False)
+            self.stand_button.setEnabled(False)
 
     def stand(self):
         self.game.stand()
@@ -182,8 +211,6 @@ class MainWindow(QMainWindow):
             for card in self.game.dealer_hand.cards:
                 self.dealer_cards_layout.addWidget(CardWidget(card))
         else:
-            dealer_visible_card = self.game.dealer_hand.cards[1]
-
             self.dealer_label.setText("Dealer's hand")
 
             hidden_card = QLabel("Hidden")
@@ -201,6 +228,8 @@ class MainWindow(QMainWindow):
             """)
 
             self.dealer_cards_layout.addWidget(hidden_card)
+
+            dealer_visible_card = self.game.dealer_hand.cards[1]
             self.dealer_cards_layout.addWidget(CardWidget(dealer_visible_card))
 
     def clear_card_layout(self, layout):
